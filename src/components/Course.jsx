@@ -17,12 +17,19 @@ const CourseList = () => {
   const [errorrMessage, setErrorrMessage] = useState("");
   const pageSize = 8;
   
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const instructorName = params.get("instructor");
+
   // phần search
   const filteredCourses = useMemo(() => {
     return categories.filter((course) => {
       if (searchText && !course.name.toLowerCase().includes(searchText.toLowerCase()) &&
           !course.instructor.name.toLowerCase().includes(searchText.toLowerCase())) {
         return false;
+      }
+      if (instructorName && course.instructor.name !== instructorName) {
+        return false; 
       }
       if (selectedPrice !== null) {
         if (selectedPrice === "Free" && course.price.discount !== "Free") return false;
@@ -41,7 +48,7 @@ const CourseList = () => {
   const handleLevelChange = (level) => {
     setSelectedLevels(prev => prev.includes(level) ? prev.filter(l => l !== level) : [...prev, level]);
   };
-
+  
   // lấy user hiện tại ra
   useEffect(() => {
     const fetchUserData = () => {
